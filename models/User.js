@@ -12,14 +12,14 @@ function validateEmail(email){
 const userSchema = new Schema({
     username: {
         type: String,
-        require: true,
+        required: true,
         unique: true,
         trim: true
         
     },
     email: {
         type: String,
-        require: true,
+        required: true,
         unique: true,
         trim: true,
         validate: [validateEmail, 'Please enter a valid email.']
