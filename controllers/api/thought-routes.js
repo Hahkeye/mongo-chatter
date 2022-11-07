@@ -53,7 +53,6 @@ router.delete("/:id", async(req,res)=>{
 
 router.post("/:thoughtId/reactions", async(req,res) =>{
     try{
-        console.log("Up dog");
         let temp = await Thought.findById(req.params.thoughtId);
         let temp2 = await Reaction.create({...req.body});
         let ins = await temp.updateOne({$push:{reactions:temp2}})
@@ -65,7 +64,6 @@ router.post("/:thoughtId/reactions", async(req,res) =>{
 
 router.delete("/:thoughtId/reactions/:reactionId", async(req,res) =>{
     try{
-        console.log("delete");
         let temp = await Thought.findById(req.params.thoughtId);
         await temp.updateOne({
             $pull:{
