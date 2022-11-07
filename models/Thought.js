@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
-const Reaction = require("./Reaction");
+const { reactionSchema } = require("./Reaction");
+// const {Reaction,reactionSchema} = require("./Reaction");
 // const ObjectId = Schema.ObjectId;
 
 
@@ -19,7 +20,7 @@ const thoughtSchema = new Schema({
         required:true
     },
     reactions: {
-        type: [Reaction.reactionSchema]
+        type: [reactionSchema]
     }
 });
 

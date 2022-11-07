@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {User} = require('../../models');
+const {User, Thought} = require('../../models');
 
 router.get("/", async (req,res) =>{
     try{
@@ -47,6 +47,9 @@ router.put("/:id", async(req,res)=>{
 router.delete("/:id", async(req,res)=>{
     try{
         let temp = await User.findByIdAndDelete(req.params.id);
+        console.log(temp.username);
+        let temp3 = await Thought.deleteMany({username: temp.username});
+        console.log(temp3);
         res.json(temp).status(200);
     }catch(e){
         res.json(e).status(400);
@@ -60,9 +63,11 @@ router.post("/:userId/friends/:friendId", async(req,res) =>{
     try{
         let temp = await User.findById(req.params.userId);
         let temp2 = await User.findById(req.params.friendId);
-        temp.friends.push(temp2);
-        let result = await temp.save();
-        res.json(result).status(200);
+        await temp.updateOne({$push:{friends: temp2._id}})
+        // temp.friends.push(temp2);
+        // let result = await temp.save();
+        // res.json(result).status(200);
+        res.status(200);
     }catch(e){
         res.json(e).status(400);
     }

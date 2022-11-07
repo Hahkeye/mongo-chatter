@@ -4,6 +4,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 // Wrap Mongoose around local connection to MongoDB
+// mongoose.set('debug', true)
 mongoose.connect('mongodb://127.0.0.1:27017/usergroups', {
   useNewUrlParser: true,
   useUnifiedTopology: true,

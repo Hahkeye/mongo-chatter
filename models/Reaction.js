@@ -1,10 +1,11 @@
-const { Schema, model} = require("mongoose");
+const { Schema, Types, model} = require("mongoose");
 
 
 
 const reactionSchema = new Schema({
     reactionId: {
-        type: Schema.ObjectId,
+        type: Schema.Types.ObjectId,
+        default: () => new Types.ObjectId(),
     },
     reactionBody: {
         type: String,
@@ -24,4 +25,5 @@ const reactionSchema = new Schema({
 const Reaction = model("Reaction", reactionSchema);
 //virtual to format date better
 
-module.exports = {Reaction, reactionSchema};
+module.exports = Reaction;
+// module.exports = { reactionSchema, Reaction};
