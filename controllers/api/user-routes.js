@@ -1,6 +1,9 @@
 const router = require('express').Router();
 const {User, Thought} = require('../../models');
+const { Schema, Types, model} = require("mongoose");
 
+
+//Get routes
 router.get("/", async (req,res) =>{
     try{
         let temp = await User.find({});
@@ -13,25 +16,23 @@ router.get("/", async (req,res) =>{
 router.get("/:id", async(req,res) =>{
     try{
         let temp = await User.findById(req.params.id);
-        // temp.toJSON();
-        // console.log(temp.toObject({virtuals: true}));
         res.json(temp).status(200);
     }catch(e){
         res.json(e).status(400);
     }
 });
-
+//Post routes
 router.post("/", async(req,res) =>{
     try{
         let temp = await User.create({...req.body})
-        console.log(temp);
+        // console.log(temp);
         res.json(temp).status(200);
     }catch(e){
         res.json(e).status(400);
     }
     
 });
-
+//Update routes
 router.put("/:id", async(req,res)=>{
     try{
         let temp = await User.findByIdAndUpdate(
@@ -44,7 +45,7 @@ router.put("/:id", async(req,res)=>{
         res.json(e).status(400);
     }
 });
-
+//Delete Route
 router.delete("/:id", async(req,res)=>{
     try{
         let temp = await User.findByIdAndDelete(req.params.id);
@@ -58,22 +59,19 @@ router.delete("/:id", async(req,res)=>{
 
 //User friend routes
 
+//Add friend to user
 router.post("/:userId/friends/:friendId", async(req,res) =>{
     try{
-        let temp = await User.findById(req.params.userId);
-        let temp2 = await User.findById(req.params.friendId);
-        await temp.updateOne({$push:{friends: temp2._id}})
-        res.status(200);
+        let results = await User.findOneAndUpdate(req.params.userId,{$push:{friends: req.params.friendId}},{new:true});
+        res.json(results).status(200);
     }catch(e){
         res.json(e).status(400);
     }
 });
-
+//Delete friend from user
 router.delete("/:userId/friends/:friendId", async(req,res)=>{
     try{
-        let temp = await User.findById(req.params.userId);
-        await temp.updateOne({$pull:{friends:{id:req.params.id}}});
-        let results = await temp.save();
+        let results = await User.findByIdAndUpdate(req.params.userId,{$pull:{friends:req.params.friendId}},{new:true});
         res.json(results).status(200);
     }catch(e){
         res.json(e).status(400);

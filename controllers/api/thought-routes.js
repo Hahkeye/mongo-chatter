@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const {Thought, Reaction} = require('../../models');
-const { Schema, Types, model} = require("mongoose");
+const { Types} = require("mongoose");
 
 router.get("/", async(req,res)=>{
     try{
@@ -23,7 +23,11 @@ router.post("/", async(req,res)=>{
 router.get("/:id", async(req,res) =>{
     try{
         let temp = await Thought.findById(req.params.id);
-        res.json(temp).status(200);
+        if(!temp){
+            res.json({message:"No thought by that id was found."});
+        }else{
+            res.json(temp).status(200);
+        }
     }catch(e){
         res.json(e).status(400);
     }
@@ -31,12 +35,12 @@ router.get("/:id", async(req,res) =>{
 
 router.put("/:id", async(req,res)=>{
     try{
-        let temp = await Thought.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {new: true}
-        )
-        res.json(temp).status(200);
+        let temp = await Thought.findByIdAndUpdate(req.params.id,req.body,{new: true});
+        if(!temp){
+            res.json("No thought was found by that ID.");
+        }else{
+            res.json(temp).status(200);
+        }
     }catch(e){
         res.json(e).status(400);
     }
@@ -53,9 +57,8 @@ router.delete("/:id", async(req,res)=>{
 
 router.post("/:thoughtId/reactions", async(req,res) =>{
     try{
-        let temp = await Thought.findById(req.params.thoughtId);
         let temp2 = await Reaction.create({...req.body});
-        let ins = await temp.updateOne({$push:{reactions:temp2}})
+        let ins = await Thought.findByIdAndUpdate(req.params.thoughtId,{$push:{reactions:temp2}},{new:true});
         res.json(ins).status(200);
     }catch(e){
         res.json(e).status(400);
@@ -64,16 +67,13 @@ router.post("/:thoughtId/reactions", async(req,res) =>{
 
 router.delete("/:thoughtId/reactions/:reactionId", async(req,res) =>{
     try{
-        let temp = await Thought.findById(req.params.thoughtId);
-        await temp.updateOne({
+        let results = await Thought.findByIdAndUpdate(req.params.thoughtId,{
             $pull:{
                 reactions:{
                     reactionId: Types.ObjectId(req.params.reactionId)
                 }
             }
-        });
-        let results = await temp.save();
-        // console.log(results);
+        },{new:true});
         res.json(results).status(200);
     }catch(e){
         res.json(e).status(400);
